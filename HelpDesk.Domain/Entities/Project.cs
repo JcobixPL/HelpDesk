@@ -3,12 +3,12 @@
 public class Project
 {
     public Guid Id {  get; set; }
-    public string Name { get; set; }
-    public string Key { get; set; }
-    public string Description { get; set; }
+    public string Name { get; set; } = null!;
+    public string Key { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public Guid CreatedById { get; set; }
     public DateTime CreatedAt { get; set; }
-    public User CreatedBy { get; set; }
+    public User CreatedBy { get; set; } = null!;
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
     private Project()

@@ -5,9 +5,9 @@ namespace HelpDesk.Domain.Entities;
 public class Ticket
 {
     public Guid Id { get; set; }
-    public string Key { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public string Key { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public TicketStatus Status { get; set; }
     public TicketPriority Priority { get; set; }
     public TicketType Type { get; set; }
@@ -17,8 +17,8 @@ public class Ticket
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? ResolvedAt { get; set; }
-    public Project Project { get; set; }
-    public User Reporter { get; set; }
+    public Project Project { get; set; } = null!;
+    public User Reporter { get; set; } = null!;
     public User? Assignee { get; set; }
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

@@ -11,8 +11,8 @@ public class TicketHistory
     public string? OldValue { get; set; }
     public string? NewValue { get; set; }
     public DateTime CreatedAt { get; set; }
-    public Ticket Ticket { get; set; }
-    public User User { get; set; }
+    public Ticket Ticket { get; set; } = null!;
+    public User User { get; set; } = null!;
 
     private TicketHistory()
     {
