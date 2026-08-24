@@ -8,6 +8,7 @@ public class User
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public bool IsActive { get; set; }
     public UserRole Role { get; set; }
     public DateTime CreatedAt { get; set; }
 
@@ -25,7 +26,21 @@ public class User
         FirstName = firstName;
         LastName = lastName;
         Email = email;
+        IsActive = true;
         Role = role;
         CreatedAt = DateTime.UtcNow;
+    }
+
+    public void Update(
+        string firstName,
+        string lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+    }
+
+    public void Deactivate()
+    {
+        IsActive = false;
     }
 }

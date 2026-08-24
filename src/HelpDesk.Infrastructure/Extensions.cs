@@ -20,6 +20,7 @@ public static class Extensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }
