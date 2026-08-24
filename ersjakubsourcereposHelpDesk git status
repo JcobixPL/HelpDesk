@@ -1,0 +1,137 @@
+[1mdiff --git a/HelpDesk.Api/HelpDesk.Api.csproj b/HelpDesk.Api/HelpDesk.Api.csproj[m
+[1mindex 672b128..7cd2e1d 100644[m
+[1m--- a/HelpDesk.Api/HelpDesk.Api.csproj[m
+[1m+++ b/HelpDesk.Api/HelpDesk.Api.csproj[m
+[36m@@ -13,6 +13,7 @@[m
+       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>[m
+       <PrivateAssets>all</PrivateAssets>[m
+     </PackageReference>[m
+[32m+[m[32m    <PackageReference Include="Scalar.AspNetCore" Version="2.17.1" />[m
+   </ItemGroup>[m
+ [m
+   <ItemGroup>[m
+[1mdiff --git a/HelpDesk.Api/Program.cs b/HelpDesk.Api/Program.cs[m
+[1mindex 6c504df..0038e8f 100644[m
+[1m--- a/HelpDesk.Api/Program.cs[m
+[1m+++ b/HelpDesk.Api/Program.cs[m
+[36m@@ -1,5 +1,7 @@[m
+[31m-using HelpDesk.Infrastructure.Context;[m
+[31m-using Microsoft.EntityFrameworkCore;[m
+[32m+[m[32musing HelpDesk.Api.Exceptions;[m
+[32m+[m[32musing HelpDesk.Application;[m
+[32m+[m[32musing HelpDesk.Infrastructure;[m
+[32m+[m[32musing Scalar.AspNetCore;[m
+ [m
+ var builder = WebApplication.CreateBuilder(args);[m
+ [m
+[36m@@ -8,16 +10,21 @@[m [mvar builder = WebApplication.CreateBuilder(args);[m
+ builder.Services.AddControllers();[m
+ builder.Services.AddOpenApi();[m
+ [m
+[31m-builder.Services.AddDbContext<HelpDeskDbContext>(options =>[m
+[31m-    options.UseNpgsql([m
+[31m-        builder.Configuration.GetConnectionString("DefaultConnection")));[m
+[32m+[m[32mbuilder.Services.AddExceptionHandler<GlobalExceptionHandler>();[m
+[32m+[m[32mbuilder.Services.AddProblemDetails();[m
+[32m+[m
+[32m+[m[32mbuilder.Services.AddInfrastructure(builder.Configuration);[m
+[32m+[m[32mbuilder.Services.AddApplication();[m
+ [m
+ var app = builder.Build();[m
+ [m
+[32m+[m[32mapp.UseExceptionHandler();[m
+[32m+[m
+ // Configure the HTTP request pipeline.[m
+ if (app.Environment.IsDevelopment())[m
+ {[m
+     app.MapOpenApi();[m
+[32m+[m[32m    app.MapScalarApiReference();[m
+ }[m
+ [m
+ app.UseHttpsRedirection();[m
+[1mdiff --git a/HelpDesk.Api/Properties/launchSettings.json b/HelpDesk.Api/Properties/launchSettings.json[m
+[1mindex b00182c..4a50c3b 100644[m
+[1m--- a/HelpDesk.Api/Properties/launchSettings.json[m
+[1m+++ b/HelpDesk.Api/Properties/launchSettings.json[m
+[36m@@ -1,23 +1,36 @@[m
+[31m-﻿{[m
+[31m-  "$schema": "https://json.schemastore.org/launchsettings.json",[m
+[32m+[m[32m{[m
+   "profiles": {[m
+     "http": {[m
+       "commandName": "Project",[m
+[31m-      "dotnetRunMessages": true,[m
+[31m-      "launchBrowser": false,[m
+[31m-      "applicationUrl": "http://localhost:5291",[m
+       "environmentVariables": {[m
+         "ASPNETCORE_ENVIRONMENT": "Development"[m
+[31m-      }[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "dotnetRunMessages": true,[m
+[32m+[m[32m      "applicationUrl": "http://localhost:5291"[m
+     },[m
+     "https": {[m
+       "commandName": "Project",[m
+[32m+[m[32m      "environmentVariables": {[m
+[32m+[m[32m        "ASPNETCORE_ENVIRONMENT": "Development"[m
+[32m+[m[32m      },[m
+       "dotnetRunMessages": true,[m
+[31m-      "launchBrowser": false,[m
+[31m-      "applicationUrl": "https://localhost:7254;http://localhost:5291",[m
+[32m+[m[32m      "applicationUrl": "https://localhost:7254;http://localhost:5291"[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "IIS Express": {[m
+[32m+[m[32m      "commandName": "IISExpress",[m
+[32m+[m[32m      "launchBrowser": true,[m
+       "environmentVariables": {[m
+         "ASPNETCORE_ENVIRONMENT": "Development"[m
+       }[m
+     }[m
+[32m+[m[32m  },[m
+[32m+[m[32m  "$schema": "https://json.schemastore.org/launchsettings.json",[m
+[32m+[m[32m  "iisSettings": {[m
+[32m+[m[32m    "windowsAuthentication": false,[m
+[32m+[m[32m    "anonymousAuthentication": true,[m
+[32m+[m[32m    "iisExpress": {[m
+[32m+[m[32m      "applicationUrl": "http://localhost:55780/",[m
+[32m+[m[32m      "sslPort": 44398[m
+[32m+[m[32m    }[m
+   }[m
+[31m-}[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/HelpDesk.Application/HelpDesk.Application.csproj b/HelpDesk.Application/HelpDesk.Application.csproj[m
+[1mindex 0a8c541..78293f9 100644[m
+[1m--- a/HelpDesk.Application/HelpDesk.Application.csproj[m
+[1m+++ b/HelpDesk.Application/HelpDesk.Application.csproj[m
+[36m@@ -9,6 +9,7 @@[m
+   <ItemGroup>[m
+     <PackageReference Include="AutoMapper" Version="16.2.0" />[m
+     <PackageReference Include="FluentValidation" Version="12.1.1" />[m
+[32m+[m[32m    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />[m
+     <PackageReference Include="MediatR" Version="14.2.0" />[m
+   </ItemGroup>[m
+ [m
+[1mdiff --git a/HelpDesk.Domain/Entities/Project.cs b/HelpDesk.Domain/Entities/Project.cs[m
+[1mindex 11a5c15..35580a4 100644[m
+[1m--- a/HelpDesk.Domain/Entities/Project.cs[m
+[1m+++ b/HelpDesk.Domain/Entities/Project.cs[m
+[36m@@ -6,6 +6,7 @@[m [mpublic class Project[m
+     public string Name { get; set; } = null!;[m
+     public string Key { get; set; } = null!;[m
+     public string Description { get; set; } = null!;[m
+[32m+[m[32m    public int TicketSequence { get; set; }[m[41m [m
+     public Guid CreatedById { get; set; }[m
+     public DateTime CreatedAt { get; set; }[m
+     public User CreatedBy { get; set; } = null!;[m
+[36m@@ -28,4 +29,10 @@[m [mpublic class Project[m
+         CreatedById = createdById;[m
+         CreatedAt = DateTime.UtcNow;[m
+     }[m
+[32m+[m
+[32m+[m[32m    public int GetNextTicketNumber()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        TicketSequence++;[m
+[32m+[m[32m        return TicketSequence;[m
+[32m+[m[32m    }[m
+ }[m

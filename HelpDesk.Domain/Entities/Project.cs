@@ -6,6 +6,7 @@ public class Project
     public string Name { get; set; } = null!;
     public string Key { get; set; } = null!;
     public string Description { get; set; } = null!;
+    public int TicketSequence { get; set; } 
     public Guid CreatedById { get; set; }
     public DateTime CreatedAt { get; set; }
     public User CreatedBy { get; set; } = null!;
@@ -27,5 +28,11 @@ public class Project
         Description = description;
         CreatedById = createdById;
         CreatedAt = DateTime.UtcNow;
+    }
+
+    public int GetNextTicketNumber()
+    {
+        TicketSequence++;
+        return TicketSequence;
     }
 }
