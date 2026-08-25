@@ -10,7 +10,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public GetUserByIdQueryHandler(IUserRepository userRepository,  IMapper mapper)
+    public GetUserByIdQueryHandler(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
         _mapper = mapper;

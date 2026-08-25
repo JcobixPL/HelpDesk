@@ -21,6 +21,7 @@ public static class Extensions
         services.AddScoped<ITicketRepository, TicketRepository>();
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
 
         return services;
     }
