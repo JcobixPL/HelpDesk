@@ -11,7 +11,7 @@ public class HelpDeskDbContext : DbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<TicketHistory> TicketHistories { get; set; }
 
-    public HelpDeskDbContext(DbContextOptions options) : base(options)
+    public HelpDeskDbContext(DbContextOptions<HelpDeskDbContext> options) : base(options)
     { 
     }
 

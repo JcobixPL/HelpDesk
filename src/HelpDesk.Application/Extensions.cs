@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
+using HelpDesk.Application.Validation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HelpDesk.Application;
 
@@ -20,6 +19,10 @@ public static class Extensions
         {
             cfg.AddMaps(typeof(Extensions).Assembly);
         });
+
+        services.AddTransient(
+            typeof(IPipelineBehavior<,>),
+            typeof(ValidationBehavior<,>));
 
         return services;
     }

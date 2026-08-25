@@ -4,6 +4,7 @@ using HelpDesk.Application.Features.Comments.Commands.Update;
 using HelpDesk.Application.Features.Comments.Queries.GetById;
 using HelpDesk.Application.Features.Comments.Queries.GetByTicket;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.Api.Controllers;
@@ -47,6 +48,7 @@ public class CommentController : ControllerBase
         return Ok(comments);
     }
 
+    [Authorize]
     [HttpPost("tickets/{ticketId:guid}/comments")]
     [ProducesResponseType(typeof(CommentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,8 +60,7 @@ public class CommentController : ControllerBase
     {
         var command = new CreateCommentCommand(
             request.Content,
-            ticketId,
-            request.AuthorId);
+            ticketId);
 
         var comment = await _sender.Send(
             command,

@@ -64,18 +64,36 @@ public class Ticket
 
     public void AssignTo(Guid userId)
     {
+        if (AssigneeId == userId)
+        {
+            throw new InvalidOperationException(
+                "Ticket is already assigned to this user.");
+        }
+
         AssigneeId = userId;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void Unassign()
     {
+        if (AssigneeId is null)
+        {
+            throw new InvalidOperationException(
+                "Ticket is not assigned to any user.");
+        }
+
         AssigneeId = null;
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void ChangePriority(TicketPriority priority)
     {
+        if (Priority == priority)
+        {
+            throw new InvalidOperationException(
+                $"Ticket priority is already {priority}.");
+        }
+
         Priority = priority;
         UpdatedAt = DateTime.UtcNow;
     }

@@ -164,7 +164,6 @@ namespace HelpDesk.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("Action")
-                        .HasMaxLength(1000)
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
@@ -219,6 +218,11 @@ namespace HelpDesk.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");

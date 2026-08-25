@@ -17,9 +17,6 @@ public class CreateTicketValidator : AbstractValidator<CreateTicketCommand>
         RuleFor(x => x.ProjectId)
             .NotEmpty().WithMessage("ProjectId is required.");
 
-        RuleFor(x => x.ReporterId)
-            .NotEmpty().WithMessage("ReporterId is required.");
-
         RuleFor(x => x.Priority)
             .IsInEnum().WithMessage("Priority must be a valid enum value.");
 

@@ -15,9 +15,5 @@ public class CreateCommentValidator : AbstractValidator<CreateCommentCommand>
         RuleFor(x => x.TicketId)
             .NotEmpty()
             .WithMessage("Ticket ID is required.");
-
-        RuleFor(x => x.AuthorId)
-            .NotEmpty()
-            .WithMessage("Author ID is required.");
     }
 }

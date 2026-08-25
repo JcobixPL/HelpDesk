@@ -8,6 +8,7 @@ public class User
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
     public bool IsActive { get; set; }
     public UserRole Role { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -42,5 +43,10 @@ public class User
     public void Deactivate()
     {
         IsActive = false;
+    }
+
+    public void SetPasswordHash(string passwordHash)
+    {
+        PasswordHash = passwordHash;
     }
 }

@@ -9,5 +9,4 @@ public record CreateTicketCommand(
     string Description,
     TicketPriority Priority,
     TicketType Type,
-    Guid ProjectId,
-    Guid ReporterId) : IRequest<TicketDto>;
+    Guid ProjectId) : IRequest<TicketDto>;

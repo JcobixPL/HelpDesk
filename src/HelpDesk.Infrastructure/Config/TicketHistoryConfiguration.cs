@@ -13,8 +13,7 @@ public class TicketHistoryConfiguration : IEntityTypeConfiguration<TicketHistory
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Action)
-            .IsRequired()
-            .HasMaxLength(1000);
+            .IsRequired();
 
         builder.Property(x => x.OldValue)
             .HasMaxLength(1000);

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using HelpDesk.Application.Abstractions.Authentication;
 using HelpDesk.Application.DTOs.Tickets;
 using HelpDesk.Domain.Abstractions.Repositories;
 using HelpDesk.Domain.Entities;
+using HelpDesk.Domain.Enums;
 using MediatR;
 
 namespace HelpDesk.Application.Features.Tickets.Commands.Create;
@@ -13,14 +15,18 @@ public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, T
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly ITicketHistoryRepository _ticketHistoryRepository;
 
-    public CreateTicketCommandHandler(ITicketRepository ticketRepository, IUserRepository userRepository, IProjectRepository projectRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateTicketCommandHandler(ITicketRepository ticketRepository, IUserRepository userRepository, IProjectRepository projectRepository, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUserService currentUserService, ITicketHistoryRepository ticketHistoryRepository)
     {
         _ticketRepository = ticketRepository;
         _userRepository = userRepository;
         _projectRepository = projectRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _currentUserService = currentUserService;
+        _ticketHistoryRepository = ticketHistoryRepository;
     }
 
     public async Task<TicketDto> Handle(
@@ -34,16 +40,6 @@ public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, T
             throw new KeyNotFoundException($"Project with ID {request.ProjectId} not found.");
         }
 
-        var reporter = await _userRepository.GetByIdAsync(
-            request.ReporterId,
-            cancellationToken);
-
-        if (reporter is null)
-        {
-            throw new KeyNotFoundException(
-                $"User with ID {request.ReporterId} not found.");
-        }
-
         int ticketNumber = project.GetNextTicketNumber();
         var ticketKey = $"{project.Key}-{ticketNumber}";
 
@@ -54,9 +50,19 @@ public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, T
             priority: request.Priority,
             type: request.Type,
             projectId: request.ProjectId,
-            reporterId: request.ReporterId);
+            reporterId: _currentUserService.UserId);
 
         _ticketRepository.Add(ticket);
+
+        var history = new TicketHistory(
+            ticketId: ticket.Id,
+            userId: _currentUserService.UserId,
+            action: TicketHistoryAction.Created,
+            oldValue: null,
+            newValue: null);
+
+        _ticketHistoryRepository.Add(history);
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<TicketDto>(ticket);

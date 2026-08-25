@@ -7,5 +7,4 @@ public record CreateTicketRequest(
     string Description,
     TicketPriority Priority,
     TicketType Type,
-    Guid ProjectId,
-    Guid ReporterId);
+    Guid ProjectId);

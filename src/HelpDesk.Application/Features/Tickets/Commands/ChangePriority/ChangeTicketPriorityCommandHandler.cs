@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using HelpDesk.Application.Abstractions.Authentication;
 using HelpDesk.Application.DTOs.Tickets;
 using HelpDesk.Domain.Abstractions.Repositories;
+using HelpDesk.Domain.Entities;
+using HelpDesk.Domain.Enums;
 using MediatR;
 
 namespace HelpDesk.Application.Features.Tickets.Commands.ChangePriority;
@@ -10,15 +13,21 @@ public class ChangeTicketPriorityCommandHandler : IRequestHandler<ChangeTicketPr
     private readonly ITicketRepository _ticketRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ITicketHistoryRepository _ticketHistoryRepository;
+    private readonly ICurrentUserService _currentUserService;
 
     public ChangeTicketPriorityCommandHandler(
         ITicketRepository ticketRepository,
         IUnitOfWork unitOfWork,
-        IMapper mapper)
+        IMapper mapper,
+        ITicketHistoryRepository ticketHistoryRepository,
+        ICurrentUserService currentUserService)
     {
         _ticketRepository = ticketRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _ticketHistoryRepository = ticketHistoryRepository;
+        _currentUserService = currentUserService;
     }
 
     public async Task<TicketDto> Handle(
@@ -35,9 +44,18 @@ public class ChangeTicketPriorityCommandHandler : IRequestHandler<ChangeTicketPr
                 $"Ticket with ID {request.TicketId} not found.");
         }
 
+        var oldPriority = ticket.Priority;
+
         ticket.ChangePriority(request.Priority);
 
-        _ticketRepository.Update(ticket);
+        var history = new TicketHistory(
+            ticketId: ticket.Id,
+            userId: _currentUserService.UserId,
+            action: TicketHistoryAction.PriorityChanged,
+            oldValue: oldPriority.ToString(),
+            newValue: ticket.Priority.ToString());
+
+        _ticketHistoryRepository.Add(history);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

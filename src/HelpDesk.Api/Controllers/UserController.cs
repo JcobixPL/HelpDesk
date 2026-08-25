@@ -5,6 +5,7 @@ using HelpDesk.Application.Features.Users.Commands.Update;
 using HelpDesk.Application.Features.Users.Queries.Get;
 using HelpDesk.Application.Features.Users.Queries.GetById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.Api.Controllers;
@@ -20,6 +21,7 @@ public class UserController : ControllerBase
         _sender = sender;
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<UserDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<UserDto>>> GetAll(CancellationToken cancellationToken)

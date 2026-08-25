@@ -1,4 +1,6 @@
-﻿using HelpDesk.Application.DTOs.Tickets;
+﻿using HelpDesk.Application.DTOs.TicketHistories;
+using HelpDesk.Application.DTOs.Tickets;
+using HelpDesk.Application.Features.TicketHistories.Queries.GetByTicket;
 using HelpDesk.Application.Features.Tickets.Commands.Assign;
 using HelpDesk.Application.Features.Tickets.Commands.ChangePriority;
 using HelpDesk.Application.Features.Tickets.Commands.ChangeStatus;
@@ -8,6 +10,7 @@ using HelpDesk.Application.Features.Tickets.Commands.Update;
 using HelpDesk.Application.Features.Tickets.Queries.Get;
 using HelpDesk.Application.Features.Tickets.Queries.GetById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.Api.Controllers;
@@ -49,9 +52,25 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
+    [HttpGet("{id:guid}/history")]
+    [ProducesResponseType(typeof(IReadOnlyList<TicketHistoryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyList<TicketHistoryDto>>> GetHistory(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var history = await _sender.Send(
+            new GetTicketHistoryQuery(id),
+            cancellationToken);
+
+        return Ok(history);
+    }
+
+    [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TicketDto>> Create(
     CreateTicketRequest request,
@@ -62,8 +81,7 @@ public class TicketController : ControllerBase
             request.Description,
             request.Priority,
             request.Type,
-            request.ProjectId,
-            request.ReporterId);
+            request.ProjectId);
 
         var ticket = await _sender.Send(command, cancellationToken);
 
@@ -96,6 +114,7 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
+    [Authorize]
     [HttpPatch("{id:guid}/assignee")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -116,6 +135,7 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
+    [Authorize]
     [HttpDelete("{id:guid}/assignee")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -130,6 +150,7 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
+    [Authorize]
     [HttpPatch("{id:guid}/status")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -148,6 +169,7 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
+    [Authorize]
     [HttpPatch("{id:guid}/priority")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
