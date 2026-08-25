@@ -30,6 +30,12 @@ public class Project
         CreatedAt = DateTime.UtcNow;
     }
 
+    public void Update(string name, string description)
+    {
+        Name = name;
+        Description = description;
+    }
+
     public int GetNextTicketNumber()
     {
         TicketSequence++;

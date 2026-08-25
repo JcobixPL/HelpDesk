@@ -39,7 +39,7 @@ public class UserController : ControllerBase
         CancellationToken cancellationToken)
     {
         var user = await _sender.Send(
-            new GetByIdQuery(id),
+            new GetUserByIdQuery(id),
             cancellationToken);
 
         return Ok(user);
