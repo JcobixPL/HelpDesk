@@ -2,7 +2,7 @@
 using HelpDesk.Domain.Enums;
 using MediatR;
 
-namespace HelpDesk.Application.Features.Tickets.Commands;
+namespace HelpDesk.Application.Features.Tickets.Commands.Create;
 
 public record CreateTicketCommand(
     string Title,

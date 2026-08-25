@@ -94,6 +94,10 @@ public class Ticket
         {
             ResolvedAt = DateTime.UtcNow;
         }
+        else if (newStatus == TicketStatus.InProgress)
+        {
+            ResolvedAt = null;
+        }
 
         UpdatedAt = DateTime.UtcNow;
     }

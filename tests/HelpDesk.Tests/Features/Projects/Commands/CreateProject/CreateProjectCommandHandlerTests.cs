@@ -5,9 +5,6 @@ using HelpDesk.Domain.Abstractions.Repositories;
 using HelpDesk.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HelpDesk.Tests.Features.Projects.Commands.CreateProject;
 

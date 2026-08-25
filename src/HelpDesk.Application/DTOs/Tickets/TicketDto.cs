@@ -14,4 +14,5 @@ public record TicketDto(
     Guid ReporterId,
     Guid? AssigneeId,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    DateTime? ResolvedAt);

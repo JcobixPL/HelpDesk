@@ -4,18 +4,20 @@ using HelpDesk.Domain.Abstractions.Repositories;
 using HelpDesk.Domain.Entities;
 using MediatR;
 
-namespace HelpDesk.Application.Features.Tickets.Commands;
+namespace HelpDesk.Application.Features.Tickets.Commands.Create;
 
 public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, TicketDto>
 {
     private readonly ITicketRepository _ticketRepository;
     private readonly IProjectRepository _projectRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public CreateTicketCommandHandler(ITicketRepository ticketRepository, IProjectRepository projectRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public CreateTicketCommandHandler(ITicketRepository ticketRepository, IUserRepository userRepository, IProjectRepository projectRepository, IUnitOfWork unitOfWork, IMapper mapper)
     {
         _ticketRepository = ticketRepository;
+        _userRepository = userRepository;
         _projectRepository = projectRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -30,6 +32,16 @@ public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, T
         if (project is null)
         {
             throw new KeyNotFoundException($"Project with ID {request.ProjectId} not found.");
+        }
+
+        var reporter = await _userRepository.GetByIdAsync(
+            request.ReporterId,
+            cancellationToken);
+
+        if (reporter is null)
+        {
+            throw new KeyNotFoundException(
+                $"User with ID {request.ReporterId} not found.");
         }
 
         int ticketNumber = project.GetNextTicketNumber();

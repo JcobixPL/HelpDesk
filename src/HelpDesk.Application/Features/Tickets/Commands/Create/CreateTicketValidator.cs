@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace HelpDesk.Application.Features.Tickets.Commands;
+namespace HelpDesk.Application.Features.Tickets.Commands.Create;
 
 public class CreateTicketValidator : AbstractValidator<CreateTicketCommand>
 {
@@ -8,7 +8,7 @@ public class CreateTicketValidator : AbstractValidator<CreateTicketCommand>
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
-            .MaximumLength(100).WithMessage("Title cannot be longer than 100 characters.");
+            .MaximumLength(200).WithMessage("Title cannot be longer than 200 characters.");
 
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Description is required.")
