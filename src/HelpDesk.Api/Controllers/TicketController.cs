@@ -17,6 +17,7 @@ namespace HelpDesk.Api.Controllers;
 
 [ApiController]
 [Route("api/tickets")]
+[Authorize]
 public class TicketController : ControllerBase
 {
     private readonly ISender _sender;
@@ -66,7 +67,6 @@ public class TicketController : ControllerBase
         return Ok(history);
     }
 
-    [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -114,7 +114,6 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
-    [Authorize]
     [HttpPatch("{id:guid}/assignee")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -135,7 +134,6 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
-    [Authorize]
     [HttpDelete("{id:guid}/assignee")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -150,7 +148,6 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
-    [Authorize]
     [HttpPatch("{id:guid}/status")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -169,7 +166,6 @@ public class TicketController : ControllerBase
         return Ok(ticket);
     }
 
-    [Authorize]
     [HttpPatch("{id:guid}/priority")]
     [ProducesResponseType(typeof(TicketDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

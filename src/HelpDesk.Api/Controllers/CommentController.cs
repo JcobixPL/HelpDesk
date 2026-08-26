@@ -11,6 +11,7 @@ namespace HelpDesk.Api.Controllers;
 
 [ApiController]
 [Route("api")]
+[Authorize]
 public class CommentController : ControllerBase
 {
     private readonly ISender _sender;
@@ -48,7 +49,6 @@ public class CommentController : ControllerBase
         return Ok(comments);
     }
 
-    [Authorize]
     [HttpPost("tickets/{ticketId:guid}/comments")]
     [ProducesResponseType(typeof(CommentDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

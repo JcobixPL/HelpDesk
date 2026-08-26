@@ -12,6 +12,7 @@ namespace HelpDesk.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
     private readonly ISender _sender;
@@ -21,7 +22,6 @@ public class UserController : ControllerBase
         _sender = sender;
     }
 
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<UserDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<UserDto>>> GetAll(CancellationToken cancellationToken)

@@ -4,6 +4,7 @@ using HelpDesk.Application.Features.Projects.Commands.Update;
 using HelpDesk.Application.Features.Projects.Queries.Get;
 using HelpDesk.Application.Features.Projects.Queries.GetById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -20,6 +21,7 @@ public class ProjectController : ControllerBase
         _sender = sender;
     }
 
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<ProjectDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<ProjectDto>>> GetAll(
@@ -32,6 +34,7 @@ public class ProjectController : ControllerBase
         return Ok(projects);
     }
 
+    [Authorize]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -46,6 +49,7 @@ public class ProjectController : ControllerBase
         return Ok(project);
     }
 
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPost]
     [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -69,6 +73,7 @@ public class ProjectController : ControllerBase
             project);
     }
 
+    [Authorize(Roles = "Manager,Admin")]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
